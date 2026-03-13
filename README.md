@@ -18,4 +18,3 @@ Local MCP server and VS Code bridge for Business Central AL development workflow
 ## Notes
 
 - The project is Bun-first. Use `bun run start`, `bun test`, and `bun run build`.
-- In this environment Bun is installed at `~/.bun/bin/bun`; add that to `PATH` if `bun` is not already available in your shell.
