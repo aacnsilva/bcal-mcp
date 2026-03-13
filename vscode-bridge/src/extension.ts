@@ -128,13 +128,16 @@ async function handleBridgeRequest(request: JsonRpcRequest): Promise<JsonRpcResp
 
 async function workspaceInfo(params: { workspacePath?: string }) {
   const workspaceFolder = resolveWorkspaceFolder(params.workspacePath);
-  const manifest = await readWorkspaceManifest(workspaceFolder.uri.fsPath);
-  const launchProfiles = await readLaunchProfiles(workspaceFolder.uri.fsPath);
-  const objectCatalog = await scanObjectCatalog(workspaceFolder.uri.fsPath);
+  const fsPath = workspaceFolder.uri.fsPath;
+  const [manifest, launchProfiles, objectCatalog] = await Promise.all([
+    readWorkspaceManifest(fsPath),
+    readLaunchProfiles(fsPath),
+    scanObjectCatalog(fsPath),
+  ]);
 
   return {
     bridgeVersion: "1.0.0",
-    workspacePath: workspaceFolder.uri.fsPath,
+    workspacePath: fsPath,
     manifest,
     launchProfiles,
     objectCount: objectCatalog.length,
@@ -373,26 +376,29 @@ function matchesObject(
 async function textSearch(workspacePath: string, query: string) {
   const catalog = await scanObjectCatalog(workspacePath);
   const filePaths = [...new Set(catalog.map((entry) => entry.filePath))];
-  const references: Array<Record<string, unknown>> = [];
   const needle = query.toLowerCase();
 
-  for (const filePath of filePaths) {
-    const source = await readFile(filePath, "utf8");
-    const lines = source.split(/\r?\n/);
-    lines.forEach((line, lineNumber) => {
-      const column = line.toLowerCase().indexOf(needle);
-      if (column !== -1) {
-        references.push({
-          filePath,
-          line: lineNumber,
-          character: column,
-          preview: line.trim(),
-        });
-      }
-    });
-  }
+  const results = await Promise.all(
+    filePaths.map(async (filePath) => {
+      const source = await readFile(filePath, "utf8");
+      const matches: Array<Record<string, unknown>> = [];
+      const lines = source.split(/\r?\n/);
+      lines.forEach((line, lineNumber) => {
+        const column = line.toLowerCase().indexOf(needle);
+        if (column !== -1) {
+          matches.push({
+            filePath,
+            line: lineNumber,
+            character: column,
+            preview: line.trim(),
+          });
+        }
+      });
+      return matches;
+    }),
+  );
 
-  return references;
+  return results.flat();
 }
 
 function successResponse(id: JsonRpcRequest["id"], result: unknown): JsonRpcResponse {

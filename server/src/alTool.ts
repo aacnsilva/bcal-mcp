@@ -3,7 +3,7 @@ import path from "node:path";
 import { constants as fsConstants } from "node:fs";
 import { access } from "node:fs/promises";
 import { spawn } from "node:child_process";
-import { readManifest, type AppManifest } from "./project.ts";
+import { readManifest } from "./project.ts";
 
 export type BuildParams = {
   workspacePath: string;
@@ -78,7 +78,7 @@ export async function buildProject(params: BuildParams): Promise<BuildResult> {
   }
 
   const artifactPath = path.join(outputRoot, `${sanitizeFileName(manifest.name ?? "business-central-app")}.app`);
-  const args = buildArguments(workspacePath, artifactPath, params.target, manifest, params.env);
+  const args = buildArguments(workspacePath, artifactPath, params.target, params.env);
 
   params.onProgress?.("Running ALTool build.");
   const execution = await runCommand(alTool.path, args, workspacePath, params.env);
@@ -123,7 +123,6 @@ function buildArguments(
   workspacePath: string,
   artifactPath: string,
   target: string | undefined,
-  _manifest: AppManifest,
   env: NodeJS.ProcessEnv = process.env,
 ): string[] {
   const args = [

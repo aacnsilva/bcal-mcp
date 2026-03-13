@@ -1,4 +1,4 @@
-import { access, readFile, readdir } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 
 export type AppManifest = {
@@ -37,16 +37,7 @@ export type ObjectCatalogEntry = {
 const OBJECT_DECLARATION =
   /^\s*(tableextension|pageextension|permissionsetextension|reportextension|enumextension|table|page|codeunit|report|query|enum|interface|xmlport|permissionset|controladdin|profile)\s+(\d+)?\s*(?:"([^"]+)"|([^\s{]+))?/im;
 
-export async function fileExists(filePath: string): Promise<boolean> {
-  try {
-    await access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export async function resolveWorkspacePath(inputPath?: string): Promise<string> {
+export function resolveWorkspacePath(inputPath?: string): string {
   return path.resolve(inputPath ?? process.cwd());
 }
 
@@ -58,11 +49,13 @@ export async function readManifest(workspacePath: string): Promise<AppManifest> 
 
 export async function readLaunchProfiles(workspacePath: string): Promise<LaunchProfile[]> {
   const launchPath = path.join(workspacePath, ".vscode", "launch.json");
-  if (!(await fileExists(launchPath))) {
+  let raw: string;
+  try {
+    raw = await readFile(launchPath, "utf8");
+  } catch {
     return [];
   }
 
-  const raw = await readFile(launchPath, "utf8");
   const parsed = JSON.parse(raw) as { configurations?: LaunchProfile[] };
   return (parsed.configurations ?? []).filter((profile) => !profile.type || profile.type === "al");
 }
