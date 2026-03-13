@@ -279,7 +279,7 @@ async function projectInfoTool(
   bridgeClient: BridgeClient,
   env: NodeJS.ProcessEnv,
 ): Promise<ToolResult> {
-  const workspacePath = await pickWorkspacePath(args.workspacePath, defaultWorkspacePath);
+  const workspacePath = pickWorkspacePath(args.workspacePath, defaultWorkspacePath);
   const [manifest, launchProfiles, objectCatalog, bridgeAvailable, alTool] = await Promise.all([
     readManifest(workspacePath),
     readLaunchProfiles(workspacePath),
@@ -314,7 +314,7 @@ async function buildTool(
   sendNotification?: (method: string, params: Record<string, unknown>) => void,
 ): Promise<ToolResult> {
   try {
-    const workspacePath = await pickWorkspacePath(args.workspacePath, defaultWorkspacePath);
+    const workspacePath = pickWorkspacePath(args.workspacePath, defaultWorkspacePath);
     const outputPath = typeof args.outputPath === "string" ? args.outputPath : undefined;
     const target = typeof args.target === "string" ? args.target : undefined;
     const cancelToken = `build:${Date.now()}`;
@@ -400,7 +400,7 @@ async function bridgeBackedTool(
 
 async function handleResourceRead(params: Record<string, unknown>, defaultWorkspacePath: string) {
   const uri = String(params.uri ?? "");
-  const workspacePath = await pickWorkspacePath(params.workspacePath, defaultWorkspacePath);
+  const workspacePath = pickWorkspacePath(params.workspacePath, defaultWorkspacePath);
 
   switch (uri) {
     case "bc://workspace/manifest":
@@ -445,7 +445,7 @@ function failure(id: JsonRpcRequest["id"], code: number, message: string): JsonR
   };
 }
 
-async function pickWorkspacePath(inputPath: unknown, defaultWorkspacePath: string): Promise<string> {
+function pickWorkspacePath(inputPath: unknown, defaultWorkspacePath: string): string {
   if (typeof inputPath === "string" && inputPath.trim()) {
     return resolveWorkspacePath(inputPath);
   }
