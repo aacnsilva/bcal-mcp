@@ -1,0 +1,27 @@
+{
+  "name": "bcal-mcp-vscode-bridge",
+  "displayName": "BC AL MCP Bridge",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "local",
+  "type": "module",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "bcalMcpBridge.showStatus",
+        "title": "BC AL MCP Bridge: Show Status"
+      }
+    ]
+  }
+}
+

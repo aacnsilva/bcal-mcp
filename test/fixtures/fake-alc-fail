@@ -1,0 +1,3 @@
+#!/bin/sh
+printf "%s\n" "sample-al/src/CustomerList.Page.al(7,17): error AL0185: A ';' is expected."
+exit 1

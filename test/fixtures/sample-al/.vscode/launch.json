@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "BC OnPrem",
+      "type": "al",
+      "request": "launch",
+      "server": "http://localhost",
+      "serverInstance": "BC250",
+      "authentication": "UserPassword",
+      "startupObjectType": "Page",
+      "startupObjectId": 22
+    }
+  ]
+}
+

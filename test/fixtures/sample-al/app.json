@@ -1,0 +1,26 @@
+{
+  "id": "404ff2f8-d4fa-40df-bf30-8f85fca19766",
+  "name": "Sample AL App",
+  "publisher": "Contoso",
+  "version": "1.0.0.0",
+  "brief": "Fixture project",
+  "description": "Sample fixture for Business Central AL MCP tests.",
+  "platform": "25.0.0.0",
+  "application": "25.0.0.0",
+  "runtime": "14.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "437dbf0e-84ff-417a-965d-ed2bb9650972",
+      "name": "Base Application",
+      "publisher": "Microsoft",
+      "version": "25.0.0.0"
+    }
+  ]
+}
+

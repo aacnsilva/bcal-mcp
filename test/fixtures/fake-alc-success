@@ -1,0 +1,22 @@
+#!/bin/sh
+artifact=""
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --packagecachepath|--out|/out)
+      shift
+      artifact="$1"
+      ;;
+    /out:*)
+      artifact="${1#/out:}"
+      ;;
+  esac
+  shift
+done
+
+if [ -z "$artifact" ]; then
+  artifact="./SampleALApp.app"
+fi
+
+mkdir -p "$(dirname "$artifact")"
+printf "Compilation succeeded.\n"
+touch "$artifact"
